@@ -1,0 +1,174 @@
+{
+  "entities": {
+    "Product": {
+      "title": "Product",
+      "description": "A fruit product sold in the shop",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "emoji": { "type": "string" },
+        "category": { "type": "string" },
+        "unit": { "type": "string", "enum": ["kg", "piece"] },
+        "sellingPrice": { "type": "number" },
+        "costPrice": { "type": "number" },
+        "threshold": { "type": "number" },
+        "isActive": { "type": "boolean" },
+        "priceHistory": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "price": { "type": "number" },
+              "date": { "type": "string" }
+            }
+          }
+        }
+      },
+      "required": ["id", "name", "emoji", "unit", "sellingPrice", "costPrice", "threshold", "isActive"]
+    },
+    "Juice": {
+      "title": "Juice",
+      "description": "A juice template",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "emoji": { "type": "string" },
+        "sellingPrice": { "type": "number" },
+        "isActive": { "type": "boolean" },
+        "recipe": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "productId": { "type": "string" },
+              "productName": { "type": "string" },
+              "qtyPerGlass": { "type": "number" },
+              "unit": { "type": "string" }
+            }
+          }
+        }
+      },
+      "required": ["id", "name", "emoji", "sellingPrice", "isActive", "recipe"]
+    },
+    "Sale": {
+      "title": "Sale",
+      "description": "A completed sale transaction",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "timestamp": { "type": "string" },
+        "date": { "type": "string" },
+        "type": { "type": "string", "enum": ["fruit", "juice"] },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "productId": { "type": "string" },
+              "name": { "type": "string" },
+              "qty": { "type": "number" },
+              "unit": { "type": "string" },
+              "unitPrice": { "type": "number" },
+              "total": { "type": "number" }
+            }
+          }
+        },
+        "grandTotal": { "type": "number" },
+        "paymentMethod": { "type": "string" }
+      },
+      "required": ["id", "timestamp", "date", "items", "grandTotal", "paymentMethod"]
+    },
+    "Expense": {
+      "title": "Expense",
+      "description": "A shop expense or fruit purchase",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "date": { "type": "string" },
+        "category": { "type": "string" },
+        "amount": { "type": "number" },
+        "note": { "type": "string" },
+        "timestamp": { "type": "string" },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "productId": { "type": "string" },
+              "productName": { "type": "string" },
+              "qty": { "type": "number" },
+              "unit": { "type": "string" },
+              "costPricePerUnit": { "type": "number" },
+              "totalCost": { "type": "number" }
+            }
+          }
+        }
+      },
+      "required": ["id", "date", "category", "amount", "timestamp"]
+    },
+    "Stock": {
+      "title": "Stock",
+      "description": "Daily stock record for a product",
+      "type": "object",
+      "properties": {
+        "date": { "type": "string" },
+        "productId": { "type": "string" },
+        "openingStock": { "type": "number" },
+        "currentStock": { "type": "number" },
+        "adjustments": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "type": { "type": "string", "enum": ["Delivery", "Wastage", "Correction", "juice_usage"] },
+              "qty": { "type": "number" },
+              "reason": { "type": "string" },
+              "timestamp": { "type": "string" }
+            }
+          }
+        }
+      },
+      "required": ["date", "productId", "openingStock", "currentStock", "adjustments"]
+    },
+    "Settings": {
+      "title": "Settings",
+      "description": "Shop settings",
+      "type": "object",
+      "properties": {
+        "shopName": { "type": "string" },
+        "currency": { "type": "string" },
+        "language": { "type": "string" },
+        "defaultPayment": { "type": "string" }
+      },
+      "required": ["shopName", "currency", "language", "defaultPayment"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}/products/{productId}": {
+      "schema": { "$ref": "#/entities/Product" },
+      "description": "Products for a user"
+    },
+    "/users/{userId}/juices/{juiceId}": {
+      "schema": { "$ref": "#/entities/Juice" },
+      "description": "Juices for a user"
+    },
+    "/users/{userId}/sales/{saleId}": {
+      "schema": { "$ref": "#/entities/Sale" },
+      "description": "Sales for a user"
+    },
+    "/users/{userId}/expenses/{expenseId}": {
+      "schema": { "$ref": "#/entities/Expense" },
+      "description": "Expenses for a user"
+    },
+    "/users/{userId}/stock/{stockId}": {
+      "schema": { "$ref": "#/entities/Stock" },
+      "description": "Stock records for a user"
+    },
+    "/users/{userId}/settings/shop": {
+      "schema": { "$ref": "#/entities/Settings" },
+      "description": "Settings for a user"
+    }
+  }
+}
