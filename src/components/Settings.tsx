@@ -6,7 +6,7 @@ import { useToast } from './ui/Toast';
 import { Plus, Edit2, Trash2, Save, Store, Settings as SettingsIcon, AlertCircle, CupSoda } from 'lucide-react';
 
 export const Settings = () => {
-  const { products, setProducts, juices, setJuices, deleteJuice, settings, setSettings, setSales, setStock, setExpenses, logout } = useStore();
+  const { products, setProducts, juices, setJuices, deleteJuice, settings, setSettings, setSales, setStock, setExpenses } = useStore();
   const { t } = useTranslation();
   const { showToast } = useToast();
   
@@ -72,16 +72,8 @@ export const Settings = () => {
       costPrice: Number(pCostPrice),
       unit: pUnit,
       threshold: Number(pThreshold),
-      isActive: pIsActive,
-      priceHistory: editingProduct ? editingProduct.priceHistory : []
+      isActive: pIsActive ? 1 : 0,
     };
-
-    if (editingProduct && editingProduct.sellingPrice !== newProduct.sellingPrice) {
-      newProduct.priceHistory.unshift({
-        price: editingProduct.sellingPrice,
-        date: new Date().toISOString()
-      });
-    }
 
     if (editingProduct) {
       setProducts(products.map(p => p.id === editingProduct.id ? newProduct : p));
@@ -349,15 +341,6 @@ export const Settings = () => {
               <p className="text-sm text-[#6B7280] text-center py-4">No price changes recorded yet.</p>
             )}
           </div>
-        </div>
-
-        <div className="pt-6">
-          <button
-            onClick={logout}
-            className="w-full bg-gray-100 text-[#1A1A2E] border border-gray-200 py-3 rounded-xl font-bold text-sm shadow-sm active:scale-[0.98] transition-transform"
-          >
-            Sign Out
-          </button>
         </div>
       </div>
 
