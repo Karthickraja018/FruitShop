@@ -195,8 +195,8 @@ export const Money = () => {
         <h1 className="text-2xl font-bold text-[#1A1A2E]">{t('Money Manager')}</h1>
       </div>
 
-      <div className="flex overflow-x-auto gap-3 pb-4 snap-x snap-mandatory hide-scrollbar -mx-4 px-4">
-        <div className="snap-center shrink-0 w-[200px] bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex flex-col gap-2">
+      <div className="flex md:grid md:grid-cols-4 overflow-x-auto gap-3 pb-4 snap-x snap-mandatory hide-scrollbar -mx-4 px-4 md:mx-0 md:px-0">
+        <div className="snap-center shrink-0 w-[200px] md:w-auto bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex flex-col gap-2">
           <div className="flex items-center gap-2 text-[#2ECC71]">
             <div className="p-2 bg-[#2ECC71]/10 rounded-full"><TrendingUp size={16} /></div>
             <span className="text-xs font-semibold uppercase tracking-wider">{t('Revenue')}</span>
@@ -204,7 +204,7 @@ export const Money = () => {
           <p className="text-2xl font-bold text-[#1A1A2E]">{formatCurrency(totalRevenue, settings.currency)}</p>
         </div>
 
-        <div className="snap-center shrink-0 w-[200px] bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex flex-col gap-2">
+        <div className="snap-center shrink-0 w-[200px] md:w-auto bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex flex-col gap-2">
           <div className="flex items-center gap-2 text-[#EF4444]">
             <div className="p-2 bg-[#EF4444]/10 rounded-full"><TrendingDown size={16} /></div>
             <span className="text-xs font-semibold uppercase tracking-wider">{t('Expenses')}</span>
@@ -212,7 +212,7 @@ export const Money = () => {
           <p className="text-2xl font-bold text-[#1A1A2E]">{formatCurrency(totalExpense, settings.currency)}</p>
         </div>
 
-        <div className="snap-center shrink-0 w-[200px] bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex flex-col gap-2">
+        <div className="snap-center shrink-0 w-[200px] md:w-auto bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex flex-col gap-2">
           <div className="flex items-center gap-2 text-[#FF6B35]">
             <div className="p-2 bg-[#FF6B35]/10 rounded-full"><IndianRupee size={16} /></div>
             <span className="text-xs font-semibold uppercase tracking-wider">{t('Net Profit')}</span>
@@ -222,7 +222,7 @@ export const Money = () => {
           </p>
         </div>
 
-        <div className="snap-center shrink-0 w-[200px] bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex flex-col gap-2">
+        <div className="snap-center shrink-0 w-[200px] md:w-auto bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex flex-col gap-2">
           <div className="flex items-center gap-2 text-purple-500">
             <div className="p-2 bg-purple-500/10 rounded-full"><Wallet size={16} /></div>
             <span className="text-xs font-semibold uppercase tracking-wider">Cash in Hand</span>

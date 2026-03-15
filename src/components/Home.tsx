@@ -86,7 +86,7 @@ export const Home = () => {
         <p className="text-sm text-[#6B7280] mt-1">{format(new Date(), 'EEEE, dd MMMM yyyy')}</p>
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex flex-col gap-2">
           <div className="flex items-center gap-2 text-[#2ECC71]">
             <div className="p-2 bg-[#2ECC71]/10 rounded-full"><IndianRupee size={16} /></div>

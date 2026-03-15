@@ -12,7 +12,7 @@ export const Sales = () => {
   const { t } = useTranslation();
   const { showToast } = useToast();
   
-  const [activeTab, setActiveTab] = useState<'new' | 'history'>('new');
+  const [activeTab, setActiveTab] = useState<'new' | 'history' | 'dashboard'>('new');
   const [productType, setProductType] = useState<'fruit' | 'juice'>('fruit');
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [selectedJuice, setSelectedJuice] = useState<Juice | null>(null);
@@ -21,6 +21,10 @@ export const Sales = () => {
   const [paymentMethod, setPaymentMethod] = useState<'Cash' | 'UPI'>(settings.defaultPayment);
   const [expandedSaleId, setExpandedSaleId] = useState<string | null>(null);
   const [showFullHistory, setShowFullHistory] = useState(false);
+
+  const [filterDateRange, setFilterDateRange] = useState<'today' | 'week' | 'month' | 'all'>('today');
+  const [filterCategory, setFilterCategory] = useState<'all' | 'fruit' | 'juice'>('all');
+  const [filterPayment, setFilterPayment] = useState<'all' | 'Cash' | 'UPI'>('all');
 
   const activeProducts = products.filter(p => p.isActive);
   const activeJuices = juices.filter(j => j.isActive);
@@ -166,21 +170,59 @@ export const Sales = () => {
     return groups;
   }, [sales, today, showFullHistory]);
 
+  const dashboardSales = useMemo(() => {
+    let filtered = sales;
+    
+    if (filterDateRange === 'today') {
+      filtered = filtered.filter(s => s.date === today);
+    } else if (filterDateRange === 'week') {
+      const weekAgo = format(new Date(Date.now() - 7 * 86400000), 'yyyy-MM-dd');
+      filtered = filtered.filter(s => s.date >= weekAgo);
+    } else if (filterDateRange === 'month') {
+      const monthAgo = format(new Date(Date.now() - 30 * 86400000), 'yyyy-MM-dd');
+      filtered = filtered.filter(s => s.date >= monthAgo);
+    }
+
+    if (filterPayment !== 'all') {
+      filtered = filtered.filter(s => s.paymentMethod === filterPayment);
+    }
+
+    if (filterCategory !== 'all') {
+      filtered = filtered.filter(s => s.type === filterCategory);
+    }
+
+    return filtered;
+  }, [sales, filterDateRange, filterPayment, filterCategory, today]);
+
+  const dashboardStats = useMemo(() => {
+    const totalRevenue = dashboardSales.reduce((sum, s) => sum + s.grandTotal, 0);
+    const totalSalesCount = dashboardSales.length;
+    const itemsSold = dashboardSales.reduce((sum, s) => sum + s.items.reduce((iSum, i) => iSum + i.qty, 0), 0);
+    
+    return { totalRevenue, totalSalesCount, itemsSold };
+  }, [dashboardSales]);
+
   return (
     <div className="pb-24 pt-6 px-4 flex flex-col h-full">
       <div className="flex justify-between items-center mb-6">
         <div className="flex bg-gray-100 p-1 rounded-xl shrink-0">
           <button
-            className={`px-4 py-2 text-sm font-semibold rounded-lg transition-colors ${activeTab === 'new' ? 'bg-white text-[#1A1A2E] shadow-sm' : 'text-[#6B7280]'}`}
+            className={`px-3 py-2 text-xs md:text-sm font-semibold rounded-lg transition-colors ${activeTab === 'new' ? 'bg-white text-[#1A1A2E] shadow-sm' : 'text-[#6B7280]'}`}
             onClick={() => setActiveTab('new')}
           >
             {t('New Sale')}
           </button>
           <button
-            className={`px-4 py-2 text-sm font-semibold rounded-lg transition-colors ${activeTab === 'history' ? 'bg-white text-[#1A1A2E] shadow-sm' : 'text-[#6B7280]'}`}
+            className={`px-3 py-2 text-xs md:text-sm font-semibold rounded-lg transition-colors ${activeTab === 'history' ? 'bg-white text-[#1A1A2E] shadow-sm' : 'text-[#6B7280]'}`}
             onClick={() => setActiveTab('history')}
           >
             {t('History')}
+          </button>
+          <button
+            className={`px-3 py-2 text-xs md:text-sm font-semibold rounded-lg transition-colors ${activeTab === 'dashboard' ? 'bg-white text-[#1A1A2E] shadow-sm' : 'text-[#6B7280]'}`}
+            onClick={() => setActiveTab('dashboard')}
+          >
+            {t('Dashboard')}
           </button>
         </div>
         <div className="flex items-center gap-2 text-xs font-bold text-[#6B7280] bg-gray-100 px-3 py-2 rounded-xl">
@@ -207,7 +249,7 @@ export const Sales = () => {
           </div>
 
           <div className="flex-1 overflow-y-auto overscroll-contain pb-4">
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
               {productType === 'fruit' ? (
                 activeProducts.map(product => (
                   <button
@@ -347,19 +389,21 @@ export const Sales = () => {
                                   <span className="font-medium text-[#1A1A2E]">{formatCurrency(item.total, settings.currency)}</span>
                                 </div>
                               ))}
-                              <div className="pt-2 mt-2 border-t border-gray-200 flex justify-between text-xs">
-                                <button 
-                                  onClick={() => {
-                                    if(window.confirm('Delete this sale?')) {
-                                      setSales(sales.filter(s => s.id !== sale.id));
-                                      showToast('Sale deleted', 'success');
-                                    }
-                                  }}
-                                  className="text-red-500 font-medium flex items-center gap-1"
-                                >
-                                  <Trash2 size={14} /> Delete
-                                </button>
-                              </div>
+                              {sale.date === today && (
+                                <div className="pt-2 mt-2 border-t border-gray-200 flex justify-between text-xs">
+                                  <button 
+                                    onClick={() => {
+                                      if(window.confirm('Delete this sale?')) {
+                                        setSales(sales.filter(s => s.id !== sale.id));
+                                        showToast('Sale deleted', 'success');
+                                      }
+                                    }}
+                                    className="text-red-500 font-medium flex items-center gap-1"
+                                  >
+                                    <Trash2 size={14} /> Delete
+                                  </button>
+                                </div>
+                              )}
                             </motion.div>
                           )}
                         </AnimatePresence>
@@ -378,6 +422,98 @@ export const Sales = () => {
               )}
             </>
           )}
+        </div>
+      )}
+
+      {activeTab === 'dashboard' && (
+        <div className="flex-1 overflow-y-auto space-y-6">
+          <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 space-y-4">
+            <h3 className="text-sm font-bold text-[#1A1A2E] flex items-center gap-2">
+              <Calendar size={16} className="text-[#FF6B35]" /> Filters
+            </h3>
+            <div className="grid grid-cols-2 gap-3">
+              <select 
+                value={filterDateRange} 
+                onChange={e => setFilterDateRange(e.target.value as any)}
+                className="bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#FF6B35]/50"
+              >
+                <option value="today">Today</option>
+                <option value="week">Last 7 Days</option>
+                <option value="month">Last 30 Days</option>
+                <option value="all">All Time</option>
+              </select>
+              <select 
+                value={filterCategory} 
+                onChange={e => setFilterCategory(e.target.value as any)}
+                className="bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#FF6B35]/50"
+              >
+                <option value="all">All Categories</option>
+                <option value="fruit">Fruits</option>
+                <option value="juice">Juices</option>
+              </select>
+              <select 
+                value={filterPayment} 
+                onChange={e => setFilterPayment(e.target.value as any)}
+                className="bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#FF6B35]/50 col-span-2"
+              >
+                <option value="all">All Payment Methods</option>
+                <option value="Cash">Cash</option>
+                <option value="UPI">UPI</option>
+              </select>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex flex-col gap-2">
+              <div className="flex items-center gap-2 text-[#2ECC71]">
+                <span className="text-xs font-semibold uppercase tracking-wider">Total Revenue</span>
+              </div>
+              <p className="text-xl font-bold text-[#1A1A2E]">{formatCurrency(dashboardStats.totalRevenue, settings.currency)}</p>
+            </div>
+            
+            <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex flex-col gap-2">
+              <div className="flex items-center gap-2 text-blue-500">
+                <span className="text-xs font-semibold uppercase tracking-wider">Total Sales</span>
+              </div>
+              <p className="text-xl font-bold text-[#1A1A2E]">{dashboardStats.totalSalesCount}</p>
+            </div>
+
+            <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex flex-col gap-2 col-span-2">
+              <div className="flex items-center gap-2 text-purple-500">
+                <span className="text-xs font-semibold uppercase tracking-wider">Items Sold</span>
+              </div>
+              <p className="text-xl font-bold text-[#1A1A2E]">{dashboardStats.itemsSold}</p>
+            </div>
+          </div>
+
+          <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
+            <h3 className="text-sm font-bold text-[#1A1A2E] mb-4">Filtered Sales ({dashboardSales.length})</h3>
+            <div className="space-y-2">
+              {dashboardSales.length === 0 ? (
+                <p className="text-sm text-[#6B7280] text-center py-4">No sales match these filters.</p>
+              ) : (
+                dashboardSales.slice(0, 50).map(sale => (
+                  <div key={sale.id} className="flex justify-between items-center p-3 bg-gray-50 rounded-xl">
+                    <div>
+                      <p className="text-sm font-bold text-[#1A1A2E]">{formatCurrency(sale.grandTotal, settings.currency)}</p>
+                      <p className="text-xs text-[#6B7280]">{format(parseISO(sale.timestamp), 'MMM d, hh:mm a')}</p>
+                    </div>
+                    <div className="text-right">
+                      <span className={`text-[10px] px-2 py-1 rounded-full font-bold uppercase tracking-wide ${
+                        sale.paymentMethod === 'Cash' ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700'
+                      }`}>
+                        {sale.paymentMethod}
+                      </span>
+                      <p className="text-[10px] text-[#6B7280] mt-1">{sale.type}</p>
+                    </div>
+                  </div>
+                ))
+              )}
+              {dashboardSales.length > 50 && (
+                <p className="text-xs text-center text-[#6B7280] pt-2">Showing 50 most recent sales.</p>
+              )}
+            </div>
+          </div>
         </div>
       )}
 

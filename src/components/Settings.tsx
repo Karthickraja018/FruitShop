@@ -182,7 +182,7 @@ export const Settings = () => {
             </button>
           </div>
 
-          <div className="space-y-3">
+          <div className="space-y-3 md:space-y-0 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-4">
             {products.map(product => (
               <div key={product.id} className={`bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex justify-between items-center ${!product.isActive && 'opacity-50'}`}>
                 <div className="flex items-center gap-3">
@@ -221,7 +221,7 @@ export const Settings = () => {
             </button>
           </div>
 
-          <div className="space-y-3">
+          <div className={`space-y-3 ${juices.length > 0 ? 'md:space-y-0 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-4' : ''}`}>
             {juices.map(juice => (
               <div key={juice.id} className={`bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex justify-between items-center ${!juice.isActive && 'opacity-50'}`}>
                 <div className="flex items-center gap-3">
@@ -321,7 +321,7 @@ export const Settings = () => {
           <h2 className="text-sm font-bold text-[#1A1A2E] flex items-center gap-2">
             <Store size={18} className="text-[#6B7280]" /> {t('Price History')}
           </h2>
-          <div className="space-y-3">
+          <div className={`space-y-3 ${products.filter(p => p.priceHistory && p.priceHistory.length > 0).length > 0 ? 'md:space-y-0 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-4' : ''}`}>
             {products.filter(p => p.priceHistory && p.priceHistory.length > 0).map(product => (
               <div key={product.id} className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
                 <div className="flex items-center gap-2 mb-3">

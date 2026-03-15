@@ -41,7 +41,7 @@ export default function App() {
   if (!user) {
     return (
       <div className="min-h-screen bg-[#F9FAFB] flex justify-center font-sans text-[#1A1A2E]">
-        <div className="w-full max-w-[430px] bg-white min-h-screen relative shadow-2xl overflow-hidden flex flex-col items-center justify-center p-6">
+        <div className="w-full max-w-md md:max-w-lg bg-white min-h-screen md:min-h-[600px] md:h-auto md:my-auto md:rounded-3xl relative shadow-2xl overflow-hidden flex flex-col items-center justify-center p-6">
           <div className="w-24 h-24 bg-orange-100 rounded-full flex items-center justify-center mb-6">
             <span className="text-5xl">🍍</span>
           </div>
@@ -63,7 +63,7 @@ export default function App() {
   return (
     <ToastProvider>
       <div className="min-h-screen bg-[#F9FAFB] flex justify-center font-sans text-[#1A1A2E]">
-        <div className="w-full max-w-[430px] bg-[#F9FAFB] min-h-screen relative shadow-2xl overflow-hidden flex flex-col">
+        <div className="w-full max-w-7xl mx-auto bg-[#F9FAFB] min-h-screen relative shadow-sm overflow-hidden flex flex-col">
           {isOffline && (
             <div className="bg-amber-500 text-white text-xs font-medium py-1.5 px-4 flex items-center justify-center gap-2 z-50">
               <WifiOff size={14} />

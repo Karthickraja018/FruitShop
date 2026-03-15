@@ -38,8 +38,8 @@ export const Modal = ({ isOpen, onClose, title, children, fullHeight = false }: 
             animate={{ y: 0 }}
             exit={{ y: '100%' }}
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className={`fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[430px] bg-white rounded-t-3xl z-50 flex flex-col ${
-              fullHeight ? 'h-[90vh]' : 'max-h-[90vh]'
+            className={`fixed bottom-0 left-1/2 -translate-x-1/2 w-full md:max-w-lg bg-white rounded-t-3xl md:rounded-3xl md:bottom-auto md:top-1/2 md:-translate-y-1/2 z-50 flex flex-col ${
+              fullHeight ? 'h-[90vh] md:h-[80vh]' : 'max-h-[90vh] md:max-h-[80vh]'
             }`}
           >
             <div className="flex items-center justify-between p-5 border-b border-gray-100 shrink-0">

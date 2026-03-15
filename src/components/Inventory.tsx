@@ -131,7 +131,7 @@ export const Inventory = () => {
       </div>
 
       {activeTab === 'stock' && (
-        <div className="flex-1 overflow-y-auto space-y-3">
+        <div className="flex-1 overflow-y-auto space-y-3 md:space-y-0 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-4">
           {products.filter(p => p.isActive).map(product => {
             const stockData = currentStockMap.get(product.id)!;
             const percentage = stockData.openingStock > 0 ? (stockData.currentStock / stockData.openingStock) * 100 : 0;
@@ -176,9 +176,9 @@ export const Inventory = () => {
       )}
 
       {activeTab === 'wastage' && (
-        <div className="flex-1 overflow-y-auto space-y-3">
+        <div className={`flex-1 overflow-y-auto ${wastageLogs.length === 0 ? 'flex flex-col items-center justify-center' : 'space-y-3 md:space-y-0 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-4'}`}>
           {wastageLogs.length === 0 ? (
-            <div className="flex flex-col items-center justify-center h-full text-center opacity-50">
+            <div className="text-center opacity-50">
               <span className="text-6xl mb-4">🗑️</span>
               <p className="text-[#1A1A2E] font-medium">No wastage logged</p>
             </div>
